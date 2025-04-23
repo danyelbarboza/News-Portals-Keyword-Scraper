@@ -1,106 +1,139 @@
-# G1 Keyword Scraper
+# Multi-Portal Keyword Scraper
 
 ## Descrição
-Ferramenta de web scraping para extrair as últimas notícias do portal de notícias G1 e contar a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo. Desenvolvido em Python, utilizando as bibliotecas `requests`, `BeautifulSoup` e `csv` para processar e armazenar os dados extraídos.
+Ferramenta de web scraping desenvolvida em Python para extrair as últimas notícias dos portais G1 e UOL, contando a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo. O sistema é orientado a objetos, permitindo fácil expansão para novos portais no futuro.
 
 ## Funcionalidades Principais
+
 ### Extração de Notícias
-- Extrai os títulos, links e horários de publicação das notícias do G1
-- Suporta páginas de notícias atuais
-- Busca e conta a ocorrência de uma palavra-chave no texto completo de cada artigo
-- Armazenamento dos dados extraídos em um arquivo CSV estruturado
+- Extrai títulos, links e horários de publicação das notícias do G1 ou UOL.
+- Suporta múltiplas páginas de notícias recentes.
+- Conta a ocorrência de uma palavra-chave no texto completo de cada artigo.
+- Armazena os dados extraídos em um arquivo CSV estruturado.
+
+### Suporte a Múltiplos Portais
+- Arquitetura baseada em herança e polimorfismo.
+- Facilmente extensível com novos scrapers seguindo a interface `NewsScraper`.
 
 ## Requisitos Técnicos
 - Python 3.x
-- Bibliotecas `requests`, `beautifulsoup4` e `csv`
+- Bibliotecas:
+  - `requests`
+  - `beautifulsoup4`
+  - `fake_useragent`
 
 Instalação das dependências:
 ```bash
-pip install requests beautifulsoup4
+pip install requests beautifulsoup4 fake-useragent
 ```
 
 ## Como Utilizar
-1. Execute o script no terminal:
+1. Execute o script principal:
    ```bash
-   python g1_keyword_scraper.py
+   python main.py
    ```
 
-2. O script solicitará que você insira uma palavra-chave para buscar no texto dos artigos do dia.
+2. Insira a palavra-chave que deseja buscar nos artigos.
 
-3. O script buscará automaticamente as notícias mais recentes no G1, acessará os artigos e verificará quantas vezes a palavra-chave aparece em cada um deles.
+3. Escolha o portal de notícias:
+   - `1` para G1
+   - `2` para UOL
 
-4. As notícias e os dados relacionados (título, link, horário de publicação e contagem da palavra-chave) serão salvos em um arquivo CSV chamado `g1_keyword_noticias.csv`.
+4. O sistema buscará as notícias mais recentes, acessará os artigos e verificará a ocorrência da palavra-chave em cada um deles.
+
+5. Os resultados serão salvos em um arquivo CSV, nomeado conforme o portal (`g1_keyword_noticias.csv` ou `uol_keyword_noticias.csv`).
 
 ## Exemplo de Saída no Terminal
 ```plaintext
-Coletado: Governo anuncia novo pacote de medidas econômicas - Keyword: 3
+Digite a keyword que deseja analisar: educação
+Você deseja analisar qual desses portais?
+1 - G1
+2 - UOL
+Coletado: Governo anuncia novo plano educacional - Keyword: 4
 Página atual: 1
-Coletado: Protestos tomam as ruas em várias cidades - Keyword: 1
+Coletado: Enem 2025 terá mudanças importantes - Keyword: 2
 Página atual: 1
-Coleta finalizada (5 notícias salvas)
-Keyword total: 7
+Coleta finalizada (10 notícias salvas)
+Keyword total: 15
 ```
 
 ## Exemplo de Conteúdo do Arquivo CSV
 ```csv
-data_coleta,titulo,link,horario_g1,keyword_count,keyword_used
-2025-04-22 12:30:45,Governo anuncia novo pacote de medidas econômicas,https://g1.globo.com/politica/noticia/2025/04/22/pacote-de-medidas.ghtml,12:05,3,keyword
-2025-04-22 12:31:10,Protestos tomam as ruas em várias cidades,https://g1.globo.com/brasil/noticia/2025/04/22/protestos.ghtml,11:50,1,keyword
+data_coleta,titulo,link,horario,keyword_count,keyword_used
+2025-04-22 12:45:01,Governo anuncia novo plano educacional,https://g1.globo.com/educacao/noticia/...,10:25,4,educação
+2025-04-22 12:46:33,Enem 2025 terá mudanças importantes,https://g1.globo.com/educacao/noticia/...,09:58,2,educação
 ```
 
 ## Licença
 MIT License - Disponível para uso e modificação. Consulte o arquivo LICENSE para detalhes.
 
 --------------------------------------
-# G1 Keyword Scraper
+
+# Multi-Portal Keyword Scraper
 
 ## Description
-A web scraping tool to extract the latest news from the G1 news portal and count the occurrences of a specific keyword in the body of each article. Developed in Python, using the `requests`, `BeautifulSoup`, and `csv` libraries to process and store the extracted data.
+A Python-based web scraping tool that extracts the latest news articles from G1 and UOL news portals, counting how many times a specific keyword appears in the body of each article. The system is object-oriented, making it easy to extend to new news portals in the future.
 
-## Key Features
+## Main Features
+
 ### News Extraction
-- Extracts titles, links, and publication times of G1 news articles
-- Supports current news pages
-- Searches and counts the occurrences of a keyword in the full text of each article
-- Stores the extracted data in a structured CSV file
+- Extracts titles, links, and publication times from G1 or UOL articles.
+- Supports multiple pages of recent news.
+- Counts the number of times a keyword appears in the full text of each article.
+- Stores the extracted data in a structured CSV file.
+
+### Multi-Portal Support
+- Architecture based on inheritance and polymorphism.
+- Easily extendable by implementing new scrapers using the `NewsScraper` interface.
 
 ## Technical Requirements
 - Python 3.x
-- `requests`, `beautifulsoup4`, and `csv` libraries
+- Libraries:
+  - `requests`
+  - `beautifulsoup4`
+  - `fake_useragent`
 
 Install the dependencies:
 ```bash
-pip install requests beautifulsoup4
+pip install requests beautifulsoup4 fake-useragent
 ```
 
 ## How to Use
-1. Run the script in the terminal:
+1. Run the main script:
    ```bash
-   python g1_keyword_scraper.py
+   python main.py
    ```
 
-2. The script will ask you to input a keyword to search for in the articles' text.
+2. Enter the keyword you want to search for in the articles.
 
-3. The script will automatically fetch the latest news from G1, visit the articles, and check how many times the keyword appears in each one.
+3. Choose the news portal:
+   - `1` for G1
+   - `2` for UOL
 
-4. The news and related data (title, link, publication time, and keyword count) will be saved in a CSV file named `g1_keyword_noticias.csv`.
+4. The system will automatically fetch the latest articles, access each one, and count how many times the keyword appears.
+
+5. Results will be saved in a CSV file named according to the chosen portal (`g1_keyword_noticias.csv` or `uol_keyword_noticias.csv`).
 
 ## Example Output in Terminal
 ```plaintext
-Collected: Government announces new economic measures package - Keyword: 3
+Enter the keyword you want to analyze: education
+Which portal do you want to analyze?
+1 - G1
+2 - UOL
+Collected: Government announces new education plan - Keyword: 4
 Current page: 1
-Collected: Protests take over the streets in several cities - Keyword: 1
+Collected: ENEM 2025 will have important changes - Keyword: 2
 Current page: 1
-Collection finished (5 news articles saved)
-Keyword total: 7
+Scraping finished (10 news articles saved)
+Total keyword count: 15
 ```
 
-## Example CSV File Content
+## Example CSV Output
 ```csv
-data_collected,title,link,g1_time,keyword_count,keyword_used
-2025-04-22 12:30:45,Government announces new economic measures package,https://g1.globo.com/politica/noticia/2025/04/22/pacote-de-medidas.ghtml,12:05,3,keyword
-2025-04-22 12:31:10,Protests take over the streets in several cities,https://g1.globo.com/brasil/noticia/2025/04/22/protestos.ghtml,11:50,1,keyword
+data_coleta,titulo,link,horario,keyword_count,keyword_used
+2025-04-22 12:45:01,Government announces new education plan,https://g1.globo.com/education/news/...,10:25,4,education
+2025-04-22 12:46:33,ENEM 2025 will have important changes,https://g1.globo.com/education/news/...,09:58,2,education
 ```
 
 ## License
-MIT License - Available for use and modification. Please refer to the LICENSE file for details.
+MIT License – Free to use and modify. See the LICENSE file for details.
