@@ -1,4 +1,4 @@
-# Multi-Portal Keyword Scraper
+# News-Portals Keyword Scraper
 
 ## Descrição
 Ferramenta de web scraping desenvolvida em Python para extrair as últimas notícias dos portais G1 e UOL, contando a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo. O sistema é orientado a objetos, permitindo fácil expansão para novos portais no futuro.
@@ -69,7 +69,7 @@ MIT License - Disponível para uso e modificação. Consulte o arquivo LICENSE p
 
 --------------------------------------
 
-# Multi-Portal Keyword Scraper
+# News-Portals Keyword Scraper
 
 ## Description
 A Python-based web scraping tool that extracts the latest news articles from G1 and UOL news portals, counting how many times a specific keyword appears in the body of each article. The system is object-oriented, making it easy to extend to new news portals in the future.
