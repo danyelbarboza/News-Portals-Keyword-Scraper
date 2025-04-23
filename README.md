@@ -1,7 +1,7 @@
 # G1 Keyword Scraper
 
 ## Descrição
-Ferramenta de web scraping para extrair as últimas notícias do portal G1 e contar a quantidade de ocorrências de uma palavra-chave no **texto completo** de cada artigo. Desenvolvido em Python, utilizando as bibliotecas `requests`, `BeautifulSoup` e `csv` para processar e armazenar os dados extraídos.
+Ferramenta de web scraping para extrair as últimas notícias do portal de notícias G1 e contar a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo. Desenvolvido em Python, utilizando as bibliotecas `requests`, `BeautifulSoup` e `csv` para processar e armazenar os dados extraídos.
 
 ## Funcionalidades Principais
 ### Extração de Notícias
@@ -55,7 +55,7 @@ MIT License - Disponível para uso e modificação. Consulte o arquivo LICENSE p
 # G1 Keyword Scraper
 
 ## Description
-A web scraping tool to extract the latest news from the G1 portal and count the occurrences of a specific keyword in the **full text** of each article. Developed in Python, using the `requests`, `BeautifulSoup`, and `csv` libraries to process and store the extracted data.
+A web scraping tool to extract the latest news from the G1 news portal and count the occurrences of a specific keyword in the body of each article. Developed in Python, using the `requests`, `BeautifulSoup`, and `csv` libraries to process and store the extracted data.
 
 ## Key Features
 ### News Extraction

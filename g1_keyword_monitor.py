@@ -4,6 +4,7 @@ import re
 import csv
 import time
 from datetime import datetime
+import random
 
 CSV_FILE = 'g1_keyword_noticias.csv'
 
@@ -86,11 +87,10 @@ def save_to_csv(news_data):
             row['keyword_used'] = keyword_to_search
             writer.writerow(row)
 
-keyword_total_count = 0
-keyword_count = 0
 
 def run_scraper():
-    global keyword_total_count, keyword_count
+    keyword_total_count = 0
+    keyword_count = 0
     noticias = get_todays_g1_news()
     resultados = []
     data_coleta = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
