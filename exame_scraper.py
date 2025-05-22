@@ -28,14 +28,18 @@ class ExameScraper(NewsScraper):
                 title_tag = article.find("h3").find("a") if article.find("h3") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
-                timestamp = article.find("p", class_="title-small text-colors-text")
-                time_text = timestamp.text.strip() if timestamp else "Horário não encontrado"
+                script = soup.find_all("script")
+                for script in script:
+                    script_text = script.get_text()
+                    matches = re.findall(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', script_text)
+                    for date_str in matches:
+                        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
 
 
                 news_list.append({
                     "title": title,
                     "link": link,
-                    "time": time_text,
+                    "time": date_obj,
                     "current_page": pagina
                 })
 
