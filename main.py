@@ -58,7 +58,7 @@ if __name__ == "__main__":
         if portal == "1":
             g1_scraper = G1Scraper(keyword)
             portal_name = "g1"
-            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje \n")
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje \n3 - 7 dias\n")
             if periodo == "1":
                 run_scraper(g1_scraper, ['minuto', 'minutos'])
             elif periodo == "2":
