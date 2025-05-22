@@ -5,7 +5,7 @@ class NewsScraper(ABC):
         self.keyword = keyword
 
     @abstractmethod
-    def get_todays_news(self):
+    def get_news(self, period):
         pass
 
     @abstractmethod

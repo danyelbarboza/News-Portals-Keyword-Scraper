@@ -1,8 +1,10 @@
 import csv
 from datetime import datetime
 from g1_scraper import G1Scraper
-from uol_scraper import UolScraper
-
+from exame_scraper import ExameScraper
+from carta_scraper import CartaCapitalScraper
+from suno_scraper import SunoScraper
+from moneytimes_scraper import MoneyTimesScraper
 
 def save_to_csv(news_data):
     CSV_FILE = f"{portal_name}_keyword_noticias.csv"
@@ -23,10 +25,10 @@ def save_to_csv(news_data):
             writer.writerow(row)
 
 
-def run_scraper(portal_scaper):
+def run_scraper(portal_scaper, period):
     keyword_total_count = 0
     keyword_count = 0
-    noticias = portal_scaper.get_todays_news()
+    noticias = portal_scaper.get_news(period)
     resultados = []
     data_coleta = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
    
@@ -45,23 +47,77 @@ def run_scraper(portal_scaper):
 
 
     save_to_csv(resultados)
-    print(f"Coleta finalizada ({len(resultados)} notícias salvas)")
+    print(f"\nColeta finalizada ({len(resultados)} notícias salvas)")
     print(f"Keyword total: {keyword_total_count}")
-
+    
 
 if __name__ == "__main__":
-    keyword = input("Digite a keyword que deseja analisar: ")
+    keyword = input("\nBem-vindo ao Keyword Monitor!\nEssa ferramenta coleta notícias de portais brasileiros e conta a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo.\n\nDigite a keyword que deseja analisar: ")
     while True:
-        portal = input(f"Você deseja analisar qual desses portais?\n1 - G1\n2 - UOL\n")
+        portal = input("\nVocê deseja analisar qual desses portais?\n1 - G1\n2 - Exame\n3 - Carta Capital\n4 - Money Times\n5 - Suno\n")
         if portal == "1":
             g1_scraper = G1Scraper(keyword)
             portal_name = "g1"
-            run_scraper(g1_scraper)
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje \n")
+            if periodo == "1":
+                run_scraper(g1_scraper, ['minuto', 'minutos'])
+            elif periodo == "2":
+                run_scraper(g1_scraper, ['minuto', 'minutos', 'hora', 'horas'])
+            elif periodo == "3":
+                run_scraper(g1_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias'])
             break
         elif portal == "2":
-            uol_scraper = UolScraper(keyword)
-            portal_name = "uol"
-            run_scraper(uol_scraper)
+            exame_scraper = ExameScraper(keyword)
+            portal_name = "exame"
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
+            if periodo == "1":
+                run_scraper(exame_scraper,1)
+            elif periodo == "2":
+                run_scraper(exame_scraper, 2)
+            elif periodo == "3":
+                run_scraper(exame_scraper, 3)
+            elif periodo == "4":
+                run_scraper(exame_scraper, 4)
+            break
+        elif portal == "3":
+            carta_scraper = CartaCapitalScraper(keyword)
+            portal_name = "carta"
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
+            if periodo == "1":
+                run_scraper(carta_scraper,1)
+            elif periodo == "2":
+                run_scraper(carta_scraper, 2)
+            elif periodo == "3":
+                run_scraper(carta_scraper, 3)
+            elif periodo == "4":
+                run_scraper(carta_scraper, 4)
+            break
+        elif portal == "4":
+            moneytimes_scraper = MoneyTimesScraper(keyword)
+            portal_name = "moneytimes"
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 30 dias\n")
+            if periodo == "1":
+                run_scraper(moneytimes_scraper,['minuto', 'minutos'])
+            elif periodo == "2":
+                run_scraper(moneytimes_scraper, ['minuto', 'minutos', 'hora', 'horas'])
+            elif periodo == "3":
+                run_scraper(moneytimes_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias'])
+            break
+        elif portal == "5":
+            suno_scraper = SunoScraper(keyword)
+            portal_name = "suno"
+            periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
+            if periodo == "1":
+                run_scraper(suno_scraper,1)
+            elif periodo == "2":
+                run_scraper(suno_scraper, 2)
+            elif periodo == "3":
+                run_scraper(suno_scraper, 3)
+            elif periodo == "4":
+                run_scraper(suno_scraper, 4)
+            else:
+                print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
+                continue
             break
         else:
             print("\n===========\nOpção inválida. Tente novamente.\n===========\n")

@@ -1,139 +1,134 @@
-# News-Portals Keyword Scraper
+# News Portals Keyword Scraper
 
 ## Descrição
-Ferramenta de web scraping desenvolvida em Python para extrair as últimas notícias dos portais G1 e UOL, contando a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo. O sistema é orientado a objetos, permitindo fácil expansão para novos portais no futuro.
+Ferramenta avançada de web scraping desenvolvida em Python para monitorar e analisar a ocorrência de palavras-chave em artigos de notícias de diversos portais brasileiros. O sistema é modular, orientado a objetos e permite fácil expansão para novos portais.
+
+## Portais Suportados
+1. **G1** - Notícias gerais
+2. **Exame** - Notícias econômicas e financeiras
+3. **CartaCapital** - Notícias políticas e análises
+4. **MoneyTimes** - Mercado financeiro e investimentos
+5. **Suno** - Notícias de investimentos e finanças pessoais
 
 ## Funcionalidades Principais
 
-### Extração de Notícias
-- Extrai títulos, links e horários de publicação das notícias do G1 ou UOL.
-- Suporta múltiplas páginas de notícias recentes.
-- Conta a ocorrência de uma palavra-chave no texto completo de cada artigo.
-- Armazena os dados extraídos em um arquivo CSV estruturado.
+### Extração Avançada de Notícias
+- Extração completa de títulos, links e horários de publicação
+- Suporte a múltiplas páginas com detecção automática de limite temporal
+- Contagem precisa de ocorrências de palavras-chave no conteúdo dos artigos
+- Armazenamento em CSV com metadados completos
 
-### Suporte a Múltiplos Portais
-- Arquitetura baseada em herança e polimorfismo.
-- Facilmente extensível com novos scrapers seguindo a interface `NewsScraper`.
+### Filtros Temporais Flexíveis
+- Opções de período personalizáveis:
+  - Última hora
+  - Hoje
+  - 7 dias
+  - 30 dias
+  - (Varia por portal)
+
+### Arquitetura Modular
+- Design baseado em classes abstratas para fácil implementação de novos scrapers
+- Polimorfismo para tratamento uniforme de diferentes portais
+- Tratamento robusto de erros e exceções
 
 ## Requisitos Técnicos
-- Python 3.x
-- Bibliotecas:
+
+### Dependências Principais
+- Python 3.8+
+- Bibliotecas essenciais:
   - `requests`
   - `beautifulsoup4`
-  - `fake_useragent`
+  - `fake-useragent`
+  - `cloudscraper` (para portais com proteção anti-bot)
 
-Instalação das dependências:
+### Instalação
 ```bash
-pip install requests beautifulsoup4 fake-useragent
+pip install requests beautifulsoup4 fake-useragent cloudscraper
 ```
 
 ## Como Utilizar
+
 1. Execute o script principal:
    ```bash
    python main.py
    ```
 
-2. Insira a palavra-chave que deseja buscar nos artigos.
+2. Insira a palavra-chave que deseja monitorar
 
-3. Escolha o portal de notícias:
+3. Selecione o portal de notícias:
    - `1` para G1
-   - `2` para UOL
+   - `2` para Exame
+   - `3` para CartaCapital
+   - `4` para MoneyTimes
+   - `5` para Suno
 
-4. O sistema buscará as notícias mais recentes, acessará os artigos e verificará a ocorrência da palavra-chave em cada um deles.
+4. Escolha o período de análise:
+   - Opções variam por portal (última hora, hoje, 7 dias, 30 dias)
 
-5. Os resultados serão salvos em um arquivo CSV, nomeado conforme o portal (`g1_keyword_noticias.csv` ou `uol_keyword_noticias.csv`).
+5. O sistema irá:
+   - Buscar todas as notícias no período selecionado
+   - Acessar cada artigo individualmente
+   - Contar as ocorrências da palavra-chave
+   - Gerar relatório completo em CSV
 
-## Exemplo de Saída no Terminal
+## Exemplo de Saída
+
+### Terminal
 ```plaintext
-Digite a keyword que deseja analisar: educação
+Bem-vindo ao Keyword Monitor!
+Digite a keyword que deseja analisar: bitcoin
+
 Você deseja analisar qual desses portais?
 1 - G1
-2 - UOL
-Coletado: Governo anuncia novo plano educacional - Keyword: 4
+2 - Exame
+3 - Carta Capital
+4 - Money Times
+5 - Suno
+> 4
+
+Você deseja analisar qual período?
+1 - 1 hora
+2 - Hoje
+3 - 30 dias
+> 2
+
+Verificando página 1...
+Verificando página 2...
+Coletado: Bitcoin atinge novo recorde histórico - Keyword: 8
 Página atual: 1
-Coletado: Enem 2025 terá mudanças importantes - Keyword: 2
+Coletado: ETF de Bitcoin é aprovado nos EUA - Keyword: 12
 Página atual: 1
-Coleta finalizada (10 notícias salvas)
-Keyword total: 15
+
+Coleta finalizada (24 notícias salvas)
+Keyword total: 87
 ```
 
-## Exemplo de Conteúdo do Arquivo CSV
+### Arquivo CSV (exemplo)
 ```csv
 data_coleta,titulo,link,horario,keyword_count,keyword_used
-2025-04-22 12:45:01,Governo anuncia novo plano educacional,https://g1.globo.com/educacao/noticia/...,10:25,4,educação
-2025-04-22 12:46:33,Enem 2025 terá mudanças importantes,https://g1.globo.com/educacao/noticia/...,09:58,2,educação
+2025-05-22 14:30:15,Bitcoin atinge novo recorde histórico,https://www.moneytimes.com.br/bitcoin...,há 2 horas,8,bitcoin
+2025-05-22 14:31:22,ETF de Bitcoin é aprovado nos EUA,https://www.moneytimes.com.br/etf...,hoje 09:45,12,bitcoin
 ```
+
+## Estrutura do Projeto
+```
+news-scraper/
+├── main.py                 # Script principal
+├── scraper_base.py         # Classe abstrata base
+├── g1_scraper.py           # Scraper para G1
+├── exame_scraper.py        # Scraper para Exame
+├── carta_scraper.py        # Scraper para CartaCapital
+├── moneytimes_scraper.py   # Scraper para MoneyTimes
+├── suno_scraper.py         # Scraper para Suno
+└── README.md               # Documentação
+```
+
+## Melhorias Implementadas
+- Suporte a 5 portais diferentes com estratégias específicas
+- Mecanismos anti-bot (User-Agent aleatório, delays)
+- Tratamento de diferentes formatos de data/hora
+- Busca por conteúdo em múltiplos seletores CSS
+- Filtragem temporal precisa
 
 ## Licença
-MIT License - Disponível para uso e modificação. Consulte o arquivo LICENSE para detalhes.
-
---------------------------------------
-
-# News-Portals Keyword Scraper
-
-## Description
-A Python-based web scraping tool that extracts the latest news articles from G1 and UOL news portals, counting how many times a specific keyword appears in the body of each article. The system is object-oriented, making it easy to extend to new news portals in the future.
-
-## Main Features
-
-### News Extraction
-- Extracts titles, links, and publication times from G1 or UOL articles.
-- Supports multiple pages of recent news.
-- Counts the number of times a keyword appears in the full text of each article.
-- Stores the extracted data in a structured CSV file.
-
-### Multi-Portal Support
-- Architecture based on inheritance and polymorphism.
-- Easily extendable by implementing new scrapers using the `NewsScraper` interface.
-
-## Technical Requirements
-- Python 3.x
-- Libraries:
-  - `requests`
-  - `beautifulsoup4`
-  - `fake_useragent`
-
-Install the dependencies:
-```bash
-pip install requests beautifulsoup4 fake-useragent
-```
-
-## How to Use
-1. Run the main script:
-   ```bash
-   python main.py
-   ```
-
-2. Enter the keyword you want to search for in the articles.
-
-3. Choose the news portal:
-   - `1` for G1
-   - `2` for UOL
-
-4. The system will automatically fetch the latest articles, access each one, and count how many times the keyword appears.
-
-5. Results will be saved in a CSV file named according to the chosen portal (`g1_keyword_noticias.csv` or `uol_keyword_noticias.csv`).
-
-## Example Output in Terminal
-```plaintext
-Enter the keyword you want to analyze: education
-Which portal do you want to analyze?
-1 - G1
-2 - UOL
-Collected: Government announces new education plan - Keyword: 4
-Current page: 1
-Collected: ENEM 2025 will have important changes - Keyword: 2
-Current page: 1
-Scraping finished (10 news articles saved)
-Total keyword count: 15
-```
-
-## Example CSV Output
-```csv
-data_coleta,titulo,link,horario,keyword_count,keyword_used
-2025-04-22 12:45:01,Government announces new education plan,https://g1.globo.com/education/news/...,10:25,4,education
-2025-04-22 12:46:33,ENEM 2025 will have important changes,https://g1.globo.com/education/news/...,09:58,2,education
-```
-
-## License
-MIT License – Free to use and modify. See the LICENSE file for details.
+MIT License - Consulte o arquivo LICENSE para detalhes.

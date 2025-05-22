@@ -12,23 +12,23 @@ ua = UserAgent()
 headers = {"User-Agent": ua.random}
 
 
-class G1Scraper(NewsScraper):
+class MoneyTimesScraper(NewsScraper):
     def get_news(self, period):
         news_list = []
         for pagina in range(1, self.get_pages_news(period)):
             try:
-                res = requests.get(f"https://g1.globo.com/ultimas-noticias/index/feed/pagina-{pagina}.ghtml", timeout = 20)
+                res = requests.get(f"https://www.moneytimes.com.br/ultimas-noticias/page/{pagina}", timeout = 20)
             except requests.exceptions.RequestException as e:
                 print(f"Erro ao buscar página {pagina}: {e}")
                 continue
             soup = BeautifulSoup(res.text, "html.parser")
-            articles = soup.find_all("div", class_="feed-post-body")
+            articles = soup.find_all("div", class_="news-item__content")
             time.sleep(random.uniform(0.3, 0.6))
             for article in articles:
-                title_tag = article.find("a", class_="feed-post-link")
+                title_tag = article.find("h2", class_="news-item__title")
                 title = title_tag.text.strip() if title_tag else "Sem título"
-                link = title_tag["href"] if title_tag else None
-                timestamp = article.find("span", class_="feed-post-datetime")
+                link = title_tag.find("a")["href"] if title_tag.find("a") else None
+                timestamp = article.find("div", class_="news-item__meta")
                 time_text = timestamp.text.strip() if timestamp else "Horário não encontrado"
 
 
@@ -46,14 +46,14 @@ class G1Scraper(NewsScraper):
     def get_pages_news(self, period):
         paginas = 2
         while True:
-            res = requests.get(f"https://g1.globo.com/ultimas-noticias/index/feed/pagina-{paginas}.ghtml")
+            res = requests.get(f"https://www.moneytimes.com.br/ultimas-noticias/page/{paginas}")
             soup = BeautifulSoup(res.text, "html.parser")
-            articles = soup.find_all("div", class_="feed-post-body")
+            articles = soup.find_all("div", class_="news-item__content")
             time.sleep(random.uniform(0.1, 0.5))
             stop = False
             print(f"Verificando página {paginas - 1}...")
             for article in articles:
-                timestamp = article.find("span", class_="feed-post-datetime")
+                timestamp = article.find("div", class_="news-item__meta")
                 time_text = timestamp.text.strip() if timestamp else "Horário não encontrado"
 
 
@@ -71,13 +71,22 @@ class G1Scraper(NewsScraper):
             response = requests.get(url)
             response.encoding = "utf-8"
             soup = BeautifulSoup(response.text, "html.parser")
-
-
-            full_article = soup.find("article")
-            if full_article:
-                text = full_article.get_text(separator=" ", strip=True)
-                matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
-                return len(matches)
+            
+            if "gestao.empiricus" in url:
+                full_article = soup.find("div", class_="e-content")
+                return self.get_article_text(full_article)
+            elif "moneytimes" in url:
+                full_article = soup.find("div", class_="single_block_news_text")
+                return self.get_article_text(full_article)
+            elif "seudinheiro" in url:
+                full_article = soup.find("div", class_="newSingle_content")
+                return self.get_article_text(full_article)
         except Exception as e:
             return e
         return None
+    
+    def get_article_text(self, full_article):
+        all_paragraphs = full_article.find_all("p") if full_article.find("p") else 0
+        text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
+        matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
+        return len(matches)
