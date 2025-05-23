@@ -48,7 +48,7 @@ class SunoScraper(NewsScraper):
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
-        paginas = 2
+        paginas = 1
         while True:
             res = cloudscraper.create_scraper().get(f"https://www.suno.com.br/noticias/todos/page/{paginas}")
             soup = BeautifulSoup(res.text, "html.parser")

@@ -48,14 +48,14 @@ class CartaCapitalScraper(NewsScraper):
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
-        paginas = 2
+        paginas = 1
         while True:
             res = requests.get(f"https://www.cartacapital.com.br/mais-recentes/page/{paginas}")
             soup = BeautifulSoup(res.text, "html.parser")
             articles = soup.find_all("a", class_="l-list__item")
             time.sleep(random.uniform(0.1, 0.5))
             stop = False
-            print(f"Verificando página {paginas - 1}...")
+            print(f"Verificando página {paginas}...")
             for article in articles:
                 timestamp = article.find("span")
                 time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
@@ -113,7 +113,7 @@ class CartaCapitalScraper(NewsScraper):
 
             full_article = soup.find("div", class_="content-closed contentOpen")
             all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
-            text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
+            text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
             return text
         except Exception as e:
             return e

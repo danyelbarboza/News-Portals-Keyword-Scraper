@@ -25,21 +25,20 @@ class ExameScraper(NewsScraper):
             soup = BeautifulSoup(res.text, "html.parser")
             articles = soup.find_all("div", class_="sc-c60789b2-9 hhwgFF") # Extrai as notícias
             time.sleep(random.uniform(0.3, 0.6))
-            for article in articles:
+            all_script_text = " ".join(script.get_text() for script in soup.find_all("script"))
+            date_matches = list(re.finditer(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', all_script_text))
+            dates = [datetime.strptime(m.group(), "%Y-%m-%dT%H:%M:%S") for m in date_matches]
+
+            for idx, article in enumerate(articles):
                 title_tag = article.find("h3").find("a") if article.find("h3") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
-                script = soup.find_all("script")
-                for script in script:
-                    script_text = script.get_text()
-                    matches = re.findall(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', script_text)
-                    for date_str in matches:
-                        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")    
+                date_obj = dates[idx] if idx < len(dates) else None  
 
 
                 news_list.append({
                     "title": title,
-                    "link": link,
+                    "link": f"https://exame.com{link}",
                     "time": date_obj,
                     "current_page": pagina
                 })
@@ -57,8 +56,6 @@ class ExameScraper(NewsScraper):
             time.sleep(random.uniform(0.1, 0.5))
             print(f"Verificando página {paginas}...")
             script = soup.find_all("script")
-            if stop:
-                break
             for script in script:
                 script_text = script.get_text()
                 matches = re.findall(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', script_text)
@@ -113,8 +110,7 @@ class ExameScraper(NewsScraper):
 
 
             full_article = soup.find_all("p", class_="m-0 p-0 xl:text-pretty body-extra-large overflow-hidden py-3 text-colors-text dark:text-colors-background lg:py-4")
-            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
-            text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+            text = " ".join([p.get_text(separator=" ", strip=True) for p in full_article])
             return text
         except Exception as e:
             return e

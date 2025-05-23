@@ -14,6 +14,7 @@ headers = {"User-Agent": ua.random}
 
 class G1Scraper(NewsScraper):
     def get_news(self, period):
+        last_page = 0
         news_list = []
         for pagina in range(1, self.get_pages_news(period)):
             try:
@@ -25,6 +26,7 @@ class G1Scraper(NewsScraper):
             articles = soup.find_all("div", class_="feed-post-body")
             time.sleep(random.uniform(0.3, 0.6))
             for article in articles:
+                last_page = pagina
                 title_tag = article.find("a", class_="feed-post-link")
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
@@ -40,11 +42,11 @@ class G1Scraper(NewsScraper):
                 })
 
 
-        return news_list, pagina
+        return news_list, last_page
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
-        paginas = 1
+        paginas = 2
         while True:
             res = requests.get(f"https://g1.globo.com/ultimas-noticias/index/feed/pagina-{paginas}.ghtml")
             soup = BeautifulSoup(res.text, "html.parser")
@@ -91,8 +93,15 @@ class G1Scraper(NewsScraper):
 
 
             full_article = soup.find("article")
+            if full_article is None:
+                return None, None # artigo e data não encontrados
             all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
             text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
-            return text
+            timestamp = soup.find("time", itemprop="datePublished")
+            time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
+            match = re.search(r'\d{2}/\d{2}/\d{4} \d{2}h\d{2}', time_text)
+            date_str = match.group().replace("h", ":") 
+            date_obj = datetime.strptime(date_str, "%d/%m/%Y %H:%M")
+            return text, date_obj
         except Exception as e:
             return e

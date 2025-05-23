@@ -36,16 +36,37 @@ def run_scraper_db(portal_scraper, period, portal_name):
     data_coleta = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
    
     for item in headers_news:
-        full_article = portal_scraper.get_full_article(item['link']) if item['link'] else None
-        resultados.append({
-            "title": item['title'],
-            "link": item['link'],
-            "scraping_date": data_coleta,
-            "news_date": item['time'],
-            "article": full_article
-        })
-        print(f"- Coletado: {item['title']}")
-        print(f"Página {item['current_page']} de {last_page}")
+        if portal_name == "g1" or portal_name == "moneytimes":
+            if item['link']:
+                print("Link: ", item['link'])
+                full_article, news_date = portal_scraper.get_full_article(item['link'])
+                print("Artigo: ", full_article[:50])
+                print("Data: ", news_date)
+            else:
+                full_article, news_date = None, None
+            if full_article is None:
+                continue
+            resultados.append({
+                "title": item['title'],
+                "link": item['link'],
+                "scraping_date": data_coleta,
+                "news_date": news_date,
+                "article": full_article
+            })
+            print(f"- Coletado: {item['title']}")
+            print(f"Página {item['current_page']} de {last_page}")
+            
+        else:
+            full_article = portal_scraper.get_full_article(item['link']) if item['link'] else None
+            resultados.append({
+                "title": item['title'],
+                "link": item['link'],
+                "scraping_date": data_coleta,
+                "news_date": item['time'],
+                "article": full_article
+            })
+            print(f"- Coletado: {item['title']}")
+            print(f"Página {item['current_page']} de {last_page}")
         
     db.insert_news(resultados, portal_name)
 

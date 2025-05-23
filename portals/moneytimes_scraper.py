@@ -95,23 +95,108 @@ class MoneyTimesScraper(NewsScraper):
     def get_full_article(self, url):
         try:
             response = requests.get(url)
+            print("Response: response")
             response.encoding = "utf-8"
             soup = BeautifulSoup(response.text, "html.parser")
+            print("Soup: Ok")
 
-            if "gestao.empiricus" in url:
+            if "gestao.empiricus.com.br" in url:
                 full_article = soup.find("div", class_="e-content")
+                print("Full article em gestao.empiricus: Ok")
                 all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                if all_paragraphs is None:
+                    return None, None
                 text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
-                return text
-            elif "moneytimes" in url:
+                
+                timestamp = soup.find("p", class_="authorSingle_infos_att")
+                time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
+                # Exemplo de time_text: "25 de março de 2025, 12:30". Essa regex abaixo coloca cada parte em uma caixa para depois puxar o mês do dicionário "meses".
+                dia, mes_str, ano, hora, minuto = re.match(r'(\d{1,2}) (\w+) (\d{4}), (\d{2}):(\d{2})', time_text).groups()
+
+                meses = {
+                    "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
+                    "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
+                    "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
+                }
+
+                date_obj = datetime(int(ano), meses[mes_str], int(dia), int(hora), int(minuto))
+                return text, date_obj
+            
+            if "empiricus.com.br" in url:
+                full_article = soup.find("div", class_="paragraph-1 content-text content-text-post")
+                print("Full article em empiricus: Ok")
+                all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                if all_paragraphs is None:
+                    return None, None
+                text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+                
+                timestamp = soup.find("p", class_="content-single-header-author-info")
+                time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
+                dia, mes_str, ano, hora, minuto = re.match(r'(\d{1,2}) (\w+) (\d{4}), (\d{2}):(\d{2})', time_text).groups()
+
+                meses = {
+                    "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
+                    "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
+                    "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
+                }
+
+                date_obj = datetime(int(ano), meses[mes_str], int(dia), int(hora), int(minuto))
+                return text, date_obj
+            
+            
+            elif "moneytimes.com.br" in url:
                 full_article = soup.find("div", class_="single_block_news_text")
+                print("Moneytimes artigo: Ok")
                 all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                if all_paragraphs is None:
+                    return None, None
                 text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
-                return text
-            elif "seudinheiro" in url:
+                print("Moneytimes texto: Ok")
+                
+                timestamp = soup.find("span", class_="single_meta_author_infos_date_time")
+                time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
+                dia, mes_str, ano, hora, minuto = re.match(r'(\d{1,2}) (\w+) (\d{4}), (\d{2}):(\d{2})', time_text).groups()
+                print("Moneytimes timestamp: Ok")
+
+                meses = {
+                    "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
+                    "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
+                    "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
+                }
+
+                date_obj = datetime(int(ano), meses[mes_str], int(dia), int(hora), int(minuto))
+                print("Moneytimes data: Ok")
+                print(date_obj)
+                print(text[:50])
+                return text, date_obj
+            
+            
+            elif "seudinheiro.com" in url:
                 full_article = soup.find("div", class_="newSingle_content")
+                print("Seudinheiro artigo: Ok")
                 all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                if all_paragraphs is None:
+                    return None, None
                 text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
-                return text
+                print("Seudinheiro texto: Ok")
+                
+                timestamp = soup.find("div", class_="js-first-letter single__date-time")
+                time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Data não encontrada"
+                print("Seudinheiro timestamp: Ok")
+                
+                dia, mes_str, ano, hora, minuto = re.match(r'(\d{1,2}) de (\w+) de (\d{4}) (\d{2}):(\d{2})', time_text).groups()
+                print(f"Dia: {dia}, Mês: {mes_str}, Ano: {ano}, Hora: {hora}, Minuto: {minuto}")
+
+                meses = {
+                    "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
+                    "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
+                    "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
+                }
+
+                date_obj = datetime(int(ano), meses[mes_str], int(dia), int(hora), int(minuto))
+                print("Seudinheiro data: Ok")
+                print(date_obj)
+                print(text[:50])
+                return text, date_obj
         except Exception as e:
             return e
