@@ -4,7 +4,7 @@ import re
 import time
 from datetime import datetime, timedelta
 import random
-from scraper_base import NewsScraper
+from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
 
 
@@ -14,6 +14,7 @@ headers = {"User-Agent": ua.random}
 
 class ExameScraper(NewsScraper):
     def get_news(self, period):
+        pagina = 1
         news_list = []
         for pagina in range(1, self.get_pages_news(period)):
             try:
@@ -33,7 +34,7 @@ class ExameScraper(NewsScraper):
                     script_text = script.get_text()
                     matches = re.findall(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', script_text)
                     for date_str in matches:
-                        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+                        date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")    
 
 
                 news_list.append({
@@ -44,7 +45,7 @@ class ExameScraper(NewsScraper):
                 })
 
 
-        return news_list
+        return news_list, pagina
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
@@ -86,7 +87,7 @@ class ExameScraper(NewsScraper):
             paginas += 1
         return paginas
 
-    # Conta ocorrências da keyword no artigo
+    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
     def count_keyword_in_article(self, url):
         try:
             response = requests.get(f"https://exame.com{url}")
@@ -102,3 +103,18 @@ class ExameScraper(NewsScraper):
         except Exception as e:
             return e
         return None
+    
+    # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
+    def get_full_article(self, url):
+        try:
+            response = requests.get(f"https://exame.com{url}")
+            response.encoding = "utf-8"
+            soup = BeautifulSoup(response.text, "html.parser")
+
+
+            full_article = soup.find_all("p", class_="m-0 p-0 xl:text-pretty body-extra-large overflow-hidden py-3 text-colors-text dark:text-colors-background lg:py-4")
+            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+            text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+            return text
+        except Exception as e:
+            return e

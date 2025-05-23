@@ -5,7 +5,7 @@ import re
 import time
 from datetime import datetime, timedelta
 import random
-from scraper_base import NewsScraper
+from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
 
 
@@ -44,7 +44,7 @@ class SunoScraper(NewsScraper):
                 })
 
 
-        return news_list
+        return news_list, pagina
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
@@ -84,7 +84,7 @@ class SunoScraper(NewsScraper):
             paginas += 1
         return paginas
 
-    # Conta ocorrências da keyword no artigo
+    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com csv
     def count_keyword_in_article(self, url):
         try:
             response = cloudscraper.create_scraper().get(url)
@@ -110,6 +110,34 @@ class SunoScraper(NewsScraper):
                 text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
                 matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
                 return len(matches)
+            except Exception as e:
+                print("Erro em ambos os seletores.")
+                return e
+            
+    # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
+    def get_full_article(self, url):
+        try:
+            response = cloudscraper.create_scraper().get(url)
+            response.encoding = "utf-8"
+            soup = BeautifulSoup(response.text, "html.parser")
+
+
+            full_article = soup.find("div", class_="newsContent__box")
+            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+            text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
+            return text
+        except Exception as e:
+            try:
+                print("Erro no seletor, tentando outro...")
+                response = cloudscraper.create_scraper().get(url)
+                response.encoding = "utf-8"
+                soup = BeautifulSoup(response.text, "html.parser")
+
+
+                full_article = soup.find("div", class_="liveNews__updates")
+                all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+                return text
             except Exception as e:
                 print("Erro em ambos os seletores.")
                 return e

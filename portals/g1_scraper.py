@@ -4,7 +4,7 @@ import re
 import time
 from datetime import datetime
 import random
-from scraper_base import NewsScraper
+from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
 
 
@@ -40,11 +40,11 @@ class G1Scraper(NewsScraper):
                 })
 
 
-        return news_list
+        return news_list, pagina
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
-        paginas = 2
+        paginas = 1
         while True:
             res = requests.get(f"https://g1.globo.com/ultimas-noticias/index/feed/pagina-{paginas}.ghtml")
             soup = BeautifulSoup(res.text, "html.parser")
@@ -65,7 +65,7 @@ class G1Scraper(NewsScraper):
             paginas += 1
         return paginas
 
-    # Conta ocorrências da keyword no artigo
+    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
     def count_keyword_in_article(self, url):
         try:
             response = requests.get(url)
@@ -81,3 +81,18 @@ class G1Scraper(NewsScraper):
         except Exception as e:
             return e
         return None
+    
+    # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
+    def get_full_article(self, url):
+        try:
+            response = requests.get(url)
+            response.encoding = "utf-8"
+            soup = BeautifulSoup(response.text, "html.parser")
+
+
+            full_article = soup.find("article")
+            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+            text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+            return text
+        except Exception as e:
+            return e

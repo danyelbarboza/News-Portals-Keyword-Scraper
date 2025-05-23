@@ -4,7 +4,7 @@ import re
 import time
 from datetime import datetime
 import random
-from scraper_base import NewsScraper
+from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
 
 
@@ -40,7 +40,7 @@ class MoneyTimesScraper(NewsScraper):
                 })
 
 
-        return news_list
+        return news_list, pagina
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
@@ -65,7 +65,7 @@ class MoneyTimesScraper(NewsScraper):
             paginas += 1
         return paginas
 
-    # Conta ocorrências da keyword no artigo
+    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
     def count_keyword_in_article(self, url):
         try:
             response = requests.get(url)
@@ -74,19 +74,44 @@ class MoneyTimesScraper(NewsScraper):
             
             if "gestao.empiricus" in url:
                 full_article = soup.find("div", class_="e-content")
-                return self.get_article_text(full_article)
+                return self.get_keywords(full_article)
             elif "moneytimes" in url:
                 full_article = soup.find("div", class_="single_block_news_text")
-                return self.get_article_text(full_article)
+                return self.get_keywords(full_article)
             elif "seudinheiro" in url:
                 full_article = soup.find("div", class_="newSingle_content")
-                return self.get_article_text(full_article)
+                return self.get_keywords(full_article)
         except Exception as e:
             return e
         return None
     
-    def get_article_text(self, full_article):
+    def get_keywords(self, full_article):
         all_paragraphs = full_article.find_all("p") if full_article.find("p") else 0
         text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
         matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
         return len(matches)
+    
+    # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
+    def get_full_article(self, url):
+        try:
+            response = requests.get(url)
+            response.encoding = "utf-8"
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            if "gestao.empiricus" in url:
+                full_article = soup.find("div", class_="e-content")
+                all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+                return text
+            elif "moneytimes" in url:
+                full_article = soup.find("div", class_="single_block_news_text")
+                all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+                return text
+            elif "seudinheiro" in url:
+                full_article = soup.find("div", class_="newSingle_content")
+                all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+                text = " ".join([p.get_text(separator=" ", strip=True) for p in all_paragraphs])
+                return text
+        except Exception as e:
+            return e

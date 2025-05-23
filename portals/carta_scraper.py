@@ -4,7 +4,7 @@ import re
 import time
 from datetime import datetime, timedelta
 import random
-from scraper_base import NewsScraper
+from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
 
 
@@ -24,6 +24,7 @@ class CartaCapitalScraper(NewsScraper):
             soup = BeautifulSoup(res.text, "html.parser")
             articles = soup.find_all("a", class_="l-list__item") # Extrai as notícias
             time.sleep(random.uniform(0.3, 0.6))
+            last_page = pagina
             for article in articles:
                 title_tag = article.find("h2") if article.find("h2") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
@@ -43,7 +44,7 @@ class CartaCapitalScraper(NewsScraper):
                 })
 
 
-        return news_list
+        return news_list, last_page
 
     # Conta o número de páginas com notícias recentes
     def get_pages_news(self, period):
@@ -83,8 +84,27 @@ class CartaCapitalScraper(NewsScraper):
             paginas += 1
         return paginas
 
-    # Conta ocorrências da keyword no artigo
+    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
     def count_keyword_in_article(self, url):
+        try:
+            response = requests.get(url)
+            response.encoding = "utf-8"
+            soup = BeautifulSoup(response.text, "html.parser")
+
+
+            full_article = soup.find("div", class_="content-closed contentOpen")
+            if full_article is None:
+                return 0
+            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
+            text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
+            matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
+            return len(matches)
+        except Exception as e:
+            return e
+        return None
+    
+    # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
+    def get_full_article(self, url):
         try:
             response = requests.get(url)
             response.encoding = "utf-8"
@@ -94,8 +114,6 @@ class CartaCapitalScraper(NewsScraper):
             full_article = soup.find("div", class_="content-closed contentOpen")
             all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
             text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
-            matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
-            return len(matches)
+            return text
         except Exception as e:
             return e
-        return None
