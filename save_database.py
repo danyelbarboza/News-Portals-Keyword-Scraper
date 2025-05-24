@@ -33,3 +33,19 @@ class Database():
             print(f"\nColeta finalizada: ({len(news_list)} notícias coletadas e {inserted_count} inseridas com sucesso.)\n")
         except Exception as e:
             print(f"Erro ao inserir notícia: {e}")
+        finally:
+            self.connection.close()
+            
+    def verify_news(self, portal_name, title, link):
+        try:
+            with self.connection.cursor() as cursor:
+                sql = f"SELECT link FROM {portal_name} WHERE link = %s"
+                cursor.execute(sql, (link,))
+                result = cursor.fetchone() # Retorna apenas uma linha
+                if result:
+                    print(f"Notícia duplicada: {title}\n")
+                return result is not None # Retorna True se a notícia existir
+        except Exception as e:
+            print(f"Erro ao verificar notícias: {e}")
+        finally:
+            self.connection.close()

@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import random
 from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
+from save_database import Database
 
 
 ua = UserAgent()
@@ -33,6 +34,8 @@ class ExameScraper(NewsScraper):
                 title_tag = article.find("h3").find("a") if article.find("h3") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
+                if self.verify_news("exame", title, f"https://exame.com{link}"):
+                    continue
                 date_obj = dates[idx] if idx < len(dates) else None  
 
 

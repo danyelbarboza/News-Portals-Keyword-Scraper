@@ -161,7 +161,35 @@ class UserInput:
                                     print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
                                     continue
                 case "6":
-                    print("\n===========\nOpção em construção. Tente novamente.\n===========\n")
+                    periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
+                    save = input("\nVocê deseja salvar as notícias em CSV ou em um banco de dados?\n1 - CSV\n2 - Banco de dados\n")
+                    match save:
+                        case "1":
+                            match periodo:
+                                case "1":
+                                    run_scraper_csv(exame_scraper,1, portal_name, keyword)
+                                case "2":
+                                    run_scraper_csv(exame_scraper, 2, portal_name, keyword)
+                                case "3":
+                                    run_scraper_csv(exame_scraper, 3, portal_name, keyword)
+                                case "4":
+                                    run_scraper_csv(exame_scraper, 4, portal_name, keyword)
+                                case _:
+                                    print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
+                                    continue
+                        case "2":
+                            match periodo:
+                                case "1":
+                                    run_scraper_db(exame_scraper,1, portal_name)
+                                case "2":
+                                    run_scraper_db(exame_scraper, 2, portal_name)
+                                case "3":
+                                    run_scraper_db(exame_scraper, 3, portal_name)
+                                case "4":
+                                    run_scraper_db(exame_scraper, 4, portal_name)
+                                case _:
+                                    print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
+                                    continue
                     continue
                 case "7":
                     break

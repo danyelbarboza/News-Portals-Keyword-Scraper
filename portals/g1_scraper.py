@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
+from save_database import Database
 
 
 ua = UserAgent()
@@ -14,7 +15,7 @@ headers = {"User-Agent": ua.random}
 
 class G1Scraper(NewsScraper):
     def get_news(self, period):
-        last_page = 0
+        last_page = 1
         news_list = []
         for pagina in range(1, self.get_pages_news(period)):
             try:
@@ -30,6 +31,8 @@ class G1Scraper(NewsScraper):
                 title_tag = article.find("a", class_="feed-post-link")
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
+                if Database().verify_news("g1", title, link): # Verifica se a notícia já foi coletada
+                    continue
                 timestamp = article.find("span", class_="feed-post-datetime")
                 time_text = timestamp.text.strip() if timestamp else "Horário não encontrado"
 

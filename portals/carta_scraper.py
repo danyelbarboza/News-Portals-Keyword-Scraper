@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import random
 from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
+from save_database import Database
 
 
 ua = UserAgent()
@@ -15,6 +16,7 @@ headers = {"User-Agent": ua.random}
 class CartaCapitalScraper(NewsScraper):
     def get_news(self, period):
         news_list = []
+        last_page = 1
         for pagina in range(1, self.get_pages_news(period)):
             try:
                 res = requests.get(f"https://www.cartacapital.com.br/mais-recentes/page/{pagina}", timeout = 20)
@@ -29,6 +31,8 @@ class CartaCapitalScraper(NewsScraper):
                 title_tag = article.find("h2") if article.find("h2") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = article["href"] if article else None
+                if Database().verify_news("carta_capital", title, link): # Verifica se a notícia já foi coletada
+                    continue
                 timestamp = article.find("span")
                 time_text = timestamp.get_text(separator=" ", strip=True) if timestamp else "Horário não encontrado"
                 match = re.search(r'\d{2}\.\d{2}\.\d{4} \d{2}h\d{2}', time_text)

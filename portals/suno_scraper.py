@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import random
 from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
-
+from save_database import Database
 
 ua = UserAgent()
 headers = {"User-Agent": ua.random}
@@ -16,6 +16,7 @@ headers = {"User-Agent": ua.random}
 class SunoScraper(NewsScraper):
     def get_news(self, period):
         news_list = []
+        pagina = 1
         for pagina in range(1, self.get_pages_news(period)):
             try:
                 res = cloudscraper.create_scraper().get(f"https://www.suno.com.br/noticias/todos/page/{pagina}", timeout = 20)
@@ -34,6 +35,8 @@ class SunoScraper(NewsScraper):
                 match = re.search(r'\d{2}/\d{2}/\d{4} \d{2}:\d{2}', time_text)
                 date_str = match.group()
                 date_obj = datetime.strptime(date_str, "%d/%m/%Y %H:%M")
+                if Database().verify_news("suno", title, link): # Verifica se a notícia já foi coletada
+                    continue
 
 
                 news_list.append({

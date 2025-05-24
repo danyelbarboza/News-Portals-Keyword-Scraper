@@ -1,6 +1,7 @@
 from datetime import datetime
 from save_csv import SaveCSV
 from save_database import Database
+from datetime import timedelta, datetime
 
 # Coleta as notícias e salva no csv
 def run_scraper_csv(portal_scraper, period, portal_name, keyword):
@@ -36,16 +37,24 @@ def run_scraper_db(portal_scraper, period, portal_name):
     data_coleta = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
    
     for item in headers_news:
-        if portal_name == "g1" or portal_name == "moneytimes":
+        if portal_name == "g1":
             if item['link']:
-                print("Link: ", item['link'])
                 full_article, news_date = portal_scraper.get_full_article(item['link'])
-                print("Artigo: ", full_article[:50])
-                print("Data: ", news_date)
             else:
                 full_article, news_date = None, None
             if full_article is None:
                 continue
+            diference = datetime.now() - news_date
+            if period == ['minuto', 'minutos']:
+                if diference > timedelta(hours=1):
+                    break
+            elif period == ['minuto', 'minutos', 'hora', 'horas']:
+                if diference > timedelta(days=1):
+                    break
+            elif period == ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias']:
+                if diference > timedelta(days=7):
+                    break
+            
             resultados.append({
                 "title": item['title'],
                 "link": item['link'],
@@ -55,6 +64,35 @@ def run_scraper_db(portal_scraper, period, portal_name):
             })
             print(f"- Coletado: {item['title']}")
             print(f"Página {item['current_page']} de {last_page}")
+        
+        elif portal_name == "moneytimes":
+            if item['link']:
+                full_article, news_date = portal_scraper.get_full_article(item['link'])
+            else:
+                full_article, news_date = None, None
+            if full_article is None:
+                continue
+            diference = datetime.now() - news_date
+            if period == ['minuto', 'minutos']:
+                if diference > timedelta(hours=1):
+                    break
+            elif period == ['minuto', 'minutos', 'hora', 'horas']:
+                if diference > timedelta(days=1):
+                    break
+            elif period == ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias', 'mes', 'meses']:
+                if diference > timedelta(days=30):
+                    break 
+            
+            resultados.append({
+                "title": item['title'],
+                "link": item['link'],
+                "scraping_date": data_coleta,
+                "news_date": news_date,
+                "article": full_article
+            })
+            print(f"- Coletado: {item['title']}")
+            print(f"Página {item['current_page']} de {last_page}")
+            
             
         else:
             full_article = portal_scraper.get_full_article(item['link']) if item['link'] else None
