@@ -1,5 +1,3 @@
-Aqui está o README atualizado:
-
 # News Portals Keyword Scraper
 
 ## Descrição
