@@ -34,7 +34,7 @@ class ExameScraper(NewsScraper):
                 title_tag = article.find("h3").find("a") if article.find("h3") else None
                 title = title_tag.text.strip() if title_tag else "Sem título"
                 link = title_tag["href"] if title_tag else None
-                if self.verify_news("exame", title, f"https://exame.com{link}"):
+                if Database().verify_news("exame", title, f"https://exame.com{link}"): # Verifica se a notícia já foi coletada
                     continue
                 date_obj = dates[idx] if idx < len(dates) else None  
 
@@ -107,7 +107,7 @@ class ExameScraper(NewsScraper):
     # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
     def get_full_article(self, url):
         try:
-            response = requests.get(f"https://exame.com{url}")
+            response = requests.get(f"{url}")
             response.encoding = "utf-8"
             soup = BeautifulSoup(response.text, "html.parser")
 

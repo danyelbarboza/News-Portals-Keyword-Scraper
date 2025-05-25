@@ -96,6 +96,22 @@ def run_scraper_db(portal_scraper, period, portal_name):
             
         else:
             full_article = portal_scraper.get_full_article(item['link']) if item['link'] else None
+            if full_article is None:
+                continue
+            diference = datetime.now() - item['time']
+            if period == 1:
+                if diference > timedelta(hours=1):
+                    break
+            elif period == 2:
+                if diference > timedelta(days=1):
+                    break
+            elif period == 3:
+                if diference > timedelta(days=7):
+                    break
+            elif period == 4:
+                if diference > timedelta(days=30):
+                    break
+                
             resultados.append({
                 "title": item['title'],
                 "link": item['link'],
