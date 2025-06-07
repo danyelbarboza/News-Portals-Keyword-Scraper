@@ -1,7 +1,7 @@
 # News Portals Keyword Scraper
 
 ## Descrição
-Ferramenta avançada de web scraping desenvolvida em Python para monitorar e analisar a ocorrência de palavras-chave em artigos de notícias de diversos portais brasileiros. O sistema é modular, orientado a objetos e permite fácil expansão para novos portais.
+Ferramenta de web scraping desenvolvida em Python para monitorar e analisar a ocorrência de palavras-chave em artigos de notícias de diversos portais brasileiros. O sistema é modular, orientado a objetos e permite fácil expansão para novos portais.
 
 ## Portais Suportados
 1.  **G1** - Notícias gerais
