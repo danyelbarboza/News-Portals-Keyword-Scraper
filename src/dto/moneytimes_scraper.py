@@ -66,32 +66,6 @@ class MoneyTimesScraper():
                 break    
             paginas += 1
         return paginas
-
-    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
-    def count_keyword_in_article(self, url):
-        try:
-            response = requests.get(url)
-            response.encoding = "utf-8"
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            if "gestao.empiricus" in url:
-                full_article = soup.find("div", class_="e-content")
-                return self.get_keywords(full_article)
-            elif "moneytimes" in url:
-                full_article = soup.find("div", class_="single_block_news_text")
-                return self.get_keywords(full_article)
-            elif "seudinheiro" in url:
-                full_article = soup.find("div", class_="newSingle_content")
-                return self.get_keywords(full_article)
-        except Exception as e:
-            return e
-        return None
-    
-    def get_keywords(self, full_article):
-        all_paragraphs = full_article.find_all("p") if full_article.find("p") else 0
-        text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
-        matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
-        return len(matches)
     
     # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
     def get_full_article(self, url):
@@ -154,9 +128,9 @@ class MoneyTimesScraper():
                 dia, mes_str, ano, hora, minuto = re.match(r'(\d{1,2}) (\w+) (\d{4}), (\d{1,2}):(\d{2})', time_text).groups()
                 
                 meses = {
-                    "janeiro": 1, "fevereiro": 2, "março": 3, "abril": 4,
-                    "maio": 5, "junho": 6, "julho": 7, "agosto": 8,
-                    "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12
+                    "janeiro": 1, "jan": 1 ,"fevereiro": 2, "fev": 2, "março": 3, "mar": 3, "abril": 4,
+                    "abr": 4, "maio": 5, "mai": 5, "junho": 6, "jun": 6, "julho": 7, "jul": 7, "agosto": 8,
+                    "ago": 8, "setembro": 9, "set": 9, "outubro": 10, "out": 10, "novembro": 11, "nov": 11, "dezembro": 12, "dez": 12
                 }
                 date_obj = datetime(int(ano), meses[mes_str], int(dia), int(hora), int(minuto))
                 return text, date_obj

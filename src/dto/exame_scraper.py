@@ -85,23 +85,6 @@ class ExameScraper():
                 break    
             paginas += 1
         return paginas
-
-    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
-    def count_keyword_in_article(self, url):
-        try:
-            response = requests.get(f"https://exame.com{url}")
-            response.encoding = "utf-8"
-            soup = BeautifulSoup(response.text, "html.parser")
-
-
-            full_article = soup.find_all("p", class_="m-0 p-0 xl:text-pretty body-extra-large overflow-hidden py-3 text-colors-text dark:text-colors-background lg:py-4")
-            if full_article:
-                text = " ".join([p.get_text(strip=True) for p in full_article])
-                matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
-                return len(matches)
-        except Exception as e:
-            return e
-        return None
     
     # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
     def get_full_article(self, url):

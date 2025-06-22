@@ -25,9 +25,9 @@ class Database():
                     try:
                         cursor.execute(sql, (news['title'], news['link'], news['scraping_date'], news['news_date'], news['article']))
                         inserted_count += 1
-                    except psycopg2.errors.UniqueViolation:
+                    except pymysql.err.IntegrityError:
                         print(f"Notícia duplicada: {news['title']}")
-                        self.connection.rollback() # Desfaz a operação
+                        self.connection.rollback()
                     else:
                         self.connection.commit()
             print(f"\nColeta finalizada: ({len(news_list)} notícias coletadas e {inserted_count} inseridas com sucesso.)\n")

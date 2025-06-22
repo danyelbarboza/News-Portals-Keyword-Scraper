@@ -86,25 +86,6 @@ class CartaCapitalScraper():
                 break    
             paginas += 1
         return paginas
-
-    # Conta ocorrências da keyword no artigo. Essa função é usada quando trabalhamos com CSV
-    def count_keyword_in_article(self, url):
-        try:
-            response = requests.get(url)
-            response.encoding = "utf-8"
-            soup = BeautifulSoup(response.text, "html.parser")
-
-
-            full_article = soup.find("div", class_="content-closed contentOpen")
-            if full_article is None:
-                return 0
-            all_paragraphs = full_article.find_all("p") if full_article.find("p") else None
-            text = " ".join([p.get_text(strip=True) for p in all_paragraphs])
-            matches = re.findall(fr"\b{re.escape(self.keyword)}\b", text, flags=re.IGNORECASE)
-            return len(matches)
-        except Exception as e:
-            return e
-        return None
     
     # Retorna o texto completo do artigo. Essa função é usada quando trabalhamos com MySQL
     def get_full_article(self, url):

@@ -31,13 +31,13 @@ class UserInput:
                     periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
                     match periodo:
                         case "1":
-                            run_scraper_db(exame_scraper, ['minuto', 'minutos'], portal_name)
+                            run_scraper_db(exame_scraper, 1, portal_name)
                         case "2":
-                            run_scraper_db(exame_scraper, ['minuto', 'minutos', 'hora', 'horas'], portal_name)
+                            run_scraper_db(exame_scraper, 2, portal_name)
                         case "3":
-                            run_scraper_db(exame_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias'], portal_name)
+                            run_scraper_db(exame_scraper, 3, portal_name)
                         case "4":
-                            run_scraper_db(exame_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias', 'mes', 'meses'], portal_name)
+                            run_scraper_db(exame_scraper, 4, portal_name)
                         case _:
                             print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
                             continue
@@ -47,11 +47,13 @@ class UserInput:
                     periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
                     match periodo:
                         case "1":
-                            run_scraper_db(carta_scraper, ['minuto', 'minutos'], portal_name)
+                            run_scraper_db(carta_scraper, 1, portal_name)
                         case "2":
-                            run_scraper_db(carta_scraper, ['minuto', 'minutos', 'hora', 'horas'], portal_name)
+                            run_scraper_db(carta_scraper, 2, portal_name)
                         case "3":
-                            run_scraper_db(carta_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias', 'mes', 'meses'], portal_name)
+                            run_scraper_db(carta_scraper, 3, portal_name)
+                        case "4":
+                            run_scraper_db(carta_scraper, 4, portal_name)
                         case _:
                             print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
                             continue
@@ -75,11 +77,13 @@ class UserInput:
                     periodo = input("\nVocê deseja analisar qual período?\n1 - 1 hora\n2 - Hoje\n3 - 7 dias\n4 - 30 dias\n")
                     match periodo:
                         case "1":
-                            run_scraper_db(suno_scraper,['minuto', 'minutos'], portal_name)
+                            run_scraper_db(suno_scraper, 1, portal_name)
                         case "2":
-                            run_scraper_db(suno_scraper, ['minuto', 'minutos', 'hora', 'horas'], portal_name)
+                            run_scraper_db(suno_scraper, 2, portal_name)
                         case "3":
-                            run_scraper_db(suno_scraper, ['minuto', 'minutos', 'hora', 'horas', "ontem", 'dia', 'dias', 'mes', 'meses'], portal_name)
+                            run_scraper_db(suno_scraper, 3, portal_name)
+                        case "4":
+                            run_scraper_db(suno_scraper, 4, portal_name)
                         case _:
                             print("\n===========\nOpção inválida. Tente novamente.\n===========\n")
                             continue
