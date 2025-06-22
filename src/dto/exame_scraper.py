@@ -4,16 +4,15 @@ import re
 import time
 from datetime import datetime, timedelta
 import random
-from portals.scraper_base import NewsScraper
 from fake_useragent import UserAgent
-from save_database import Database
+from service.save_database import Database
 
 
 ua = UserAgent()
 headers = {"User-Agent": ua.random}
 
 
-class ExameScraper(NewsScraper):
+class ExameScraper():
     def get_news(self, period):
         pagina = 1
         news_list = []
