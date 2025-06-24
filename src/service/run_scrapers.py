@@ -1,6 +1,8 @@
 from datetime import datetime
 from service.save_database import Database
 from datetime import timedelta, datetime
+from service.sentiment_analysis import SentimentAnalysis
+
 
 # Coleta as notícias e salva no banco de dados
 def run_scraper_db(portal_scraper, period, portal_name):
@@ -95,7 +97,8 @@ def run_scraper_db(portal_scraper, period, portal_name):
             })
             print(f"- Coletado: {item['title']}")
             print(f"Página {item['current_page']} de {last_page}")
-        
-    db.insert_news(resultados, portal_name)
+            
+    sentiment, score = SentimentAnalysis().analyze(resultados)    
+    db.insert_news(resultados, portal_name, sentiment, score)
 
     

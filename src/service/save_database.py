@@ -20,10 +20,10 @@ class Database():
         inserted_count = 0
         try:
             with self.connection.cursor() as cursor:
-                sql = f"INSERT INTO {portal_name} (title, link, scraping_date, news_date, article) VALUES (%s, %s, %s, %s, %s)"
+                sql = f"INSERT INTO {portal_name} (title, link, scraping_date, news_date, article, sentiment_analysis, confidence_score) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 for news in news_list:
                     try:
-                        cursor.execute(sql, (news['title'], news['link'], news['scraping_date'], news['news_date'], news['article']))
+                        cursor.execute(sql, (news['title'], news['link'], news['scraping_date'], news['news_date'], news['article'], news['sentiment_analysis'], news['confidence_score']))
                         inserted_count += 1
                     except pymysql.err.IntegrityError:
                         print(f"Notícia duplicada: {news['title']}")
