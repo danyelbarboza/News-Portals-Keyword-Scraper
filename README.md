@@ -1,9 +1,11 @@
-# News Portals Keyword Scraper
+# News Portal Scraper & Sentiment Analysis
 
 ## Descrição
-Ferramenta de web scraping desenvolvida em Python para monitorar e analisar a ocorrência de palavras-chave em artigos de notícias de diversos portais brasileiros. O sistema é modular, orientado a objetos e permite fácil expansão para novos portais.
+
+Ferramenta de web scraping desenvolvida em Python para monitorar, coletar e analisar notícias de diversos portais brasileiros. O sistema extrai artigos completos, realiza uma análise de sentimento sobre o conteúdo e armazena os dados consolidados em um banco de dados MySQL. A arquitetura é modular, orientada a objetos e permite fácil expansão para novos portais.
 
 ## Portais Suportados
+
 1.  **G1** - Notícias gerais
 2.  **Exame** - Notícias econômicas e financeiras
 3.  **CartaCapital** - Notícias políticas e análises
@@ -12,90 +14,84 @@ Ferramenta de web scraping desenvolvida em Python para monitorar e analisar a oc
 
 ## Funcionalidades Principais
 
-### Extração Avançada de Notícias
--   Extração completa de títulos, links e horários de publicação.
--   Suporte a múltiplas páginas com detecção automática de limite temporal.
--   Contagem precisa de ocorrências de palavras-chave no conteúdo dos artigos (para saída CSV).
--   Armazenamento em CSV com metadados completos.
--   Armazenamento em banco de dados MySQL com o artigo completo e metadados.
--   Opção para executar o scraping em todos os portais suportados de uma vez.
+### Extração Automatizada de Notícias
 
-### Filtros Temporais Flexíveis
--   Opções de período personalizáveis:
-    -   Última hora
-    -   Hoje
-    -   7 dias
-    -   30 dias
-    -   (Varia por portal)
+  - Coleta de títulos, links, datas de publicação e conteúdo completo dos artigos.
+  - Suporte a múltiplas páginas com busca baseada em períodos de tempo definidos.
+  - Verificação de notícias duplicadas para garantir que apenas novos artigos sejam inseridos no banco de dados.
 
-### Arquitetura Modular
--   Design baseado em classes abstratas para fácil implementação de novos scrapers.
--   Polimorfismo para tratamento uniforme de diferentes portais.
--   Tratamento robusto de erros e exceções.
+### Análise de Sentimentos
+
+  - Análise automática do sentimento de cada artigo (positivo, neutro ou negativo).
+  - Utiliza o modelo pré-treinado `cardiffnlp/twitter-xlm-roberta-base-sentiment` da biblioteca `transformers` para alta acurácia na classificação.
+  - Armazena o resultado da análise (sentimento e pontuação de confiança) junto com os dados da notícia.
+
+### Armazenamento em Banco de Dados
+
+  - Integração com MySQL para armazenamento persistente e estruturado dos dados.
+  - Salva o artigo completo, metadados (título, link, data da notícia, data da coleta) e os resultados da análise de sentimento.
 
 ## Requisitos Técnicos
 
 ### Dependências Principais
--   Python 3.8+
--   Bibliotecas essenciais:
-    -   `requests`
-    -   `beautifulsoup4`
-    -   `fake-useragent`
-    -   `cloudscraper` (para portais com proteção anti-bot)
-    -   `pymysql` (para armazenamento em banco de dados)
-    -   `python-dotenv` (para gerenciamento de credenciais do banco de dados)
+
+  - Python 3.8+
+  - Bibliotecas essenciais:
+      - `requests`
+      - `beautifulsoup4`
+      - `cloudscraper` (para portais com proteção anti-bot)
+      - `pymysql` (para conexão com o banco de dados MySQL)
+      - `python-dotenv` (para gerenciamento de credenciais)
+      - `transformers`
+      - `torch`
+      - `sentencepiece`
 
 ### Instalação
+
+Clone o repositório e instale as dependências listadas no arquivo `requirements.txt`:
+
 ```bash
-pip install requests beautifulsoup4 fake-useragent cloudscraper pymysql python-dotenv
+pip install -r requirements.txt
 ```
 
 ## Como Utilizar
 
-1.  Configure as variáveis de ambiente para o banco de dados em um arquivo `.env` na raiz do projeto (caso opte por salvar em banco de dados):
+1.  **Configure o Ambiente**: Crie um arquivo `.env` na raiz do projeto para definir as variáveis de ambiente do seu banco de dados.
+
     ```env
     DB_HOST=seu_host
     DB_USER=seu_usuario
     DB_PASSWORD=sua_senha
     DB_NAME=seu_banco_de_dados
     ```
-2.  Execute o script principal:
+
+2.  **Execute o Script**: Inicie o programa executando o script principal.
+
     ```bash
-    python main.py
+    python src/main.py
     ```
-   
-3.  Insira a palavra-chave que deseja monitorar.
 
-4.  Selecione o portal de notícias:
-    -   `1` para G1
-    -   `2` para Exame
-    -   `3` para CartaCapital
-    -   `4` para MoneyTimes
-    -   `5` para Suno
-    -   `6` para Todos os portais
-    -   `7` para Sair
+3.  **Selecione o Portal**: Escolha um dos portais listados no menu interativo.
 
-5.  Escolha o período de análise:
-    -   Opções variam por portal (ex: última hora, hoje, 7 dias, 30 dias).
+      - `1` para G1
+      - `2` para Exame
+      - `3` para CartaCapital
+      - `4` para MoneyTimes
+      - `5` para Suno
+      - `6` para Todos (em desenvolvimento)
+      - `7` para Sair
 
-6.  Escolha como deseja salvar as notícias:
-    - `1` para CSV
-    - `2` para Banco de dados
+4.  **Escolha o Período**: Selecione o intervalo de tempo para a busca das notícias (as opções podem variar entre os portais).
 
-7.  O sistema irá:
-    -   Buscar todas as notícias no período selecionado.
-    -   Acessar cada artigo individualmente.
-    -   Se CSV: Contar as ocorrências da palavra-chave e gerar relatório completo em CSV.
-    -   Se Banco de Dados: Salvar o título, link, data da coleta, data da notícia e o conteúdo completo do artigo no banco de dados.
+5.  **Aguarde a Coleta**: O sistema irá buscar e processar as notícias, exibindo o progresso no terminal. Ao final, os dados serão salvos no banco de dados.
 
 ## Exemplo de Saída
 
-### Terminal
+### Interação no Terminal
+
 ```plaintext
 Bem-vindo ao Keyword Monitor!
 Essa ferramenta coleta notícias de portais brasileiros e conta a quantidade de ocorrências de uma palavra-chave no corpo de cada artigo.
-
-Digite a keyword que deseja analisar: bitcoin
 
 Você deseja analisar qual desses portais?
 1 - G1
@@ -105,77 +101,46 @@ Você deseja analisar qual desses portais?
 5 - Suno
 6 - Todos
 7 - Sair
-> 4
+> 1
 
 Você deseja analisar qual período?
 1 - 1 hora
-2 - Hoje
-3 - 30 dias
+2 - Hoje 
+3 - 7 dias
 > 2
-
-Você deseja salvar as notícias em CSV ou em um banco de dados?
-1 - CSV
-2 - Banco de dados
-> 1
 
 Verificando página 1...
 Verificando página 2...
-- Coletado: Bitcoin atinge novo recorde histórico
-- Keyword: 8
+- Coletado: Nova política econômica é anunciada pelo governo e divide opiniões
 Página 1 de 2
-
-- Coletado: ETF de Bitcoin é aprovado nos EUA
-- Keyword: 12
+- Coletado: Mercado reage positivamente às novas medidas de incentivo
 Página 1 de 2
-
-Coleta finalizada (2 notícias salvas em CSV)
-Keyword total: 20
-```
-
-### Arquivo CSV (exemplo) `moneytimes_keyword_noticias.csv`
-```csv
-titulo,link,scraping_date,news_date,keyword_count,keyword_used
-Bitcoin atinge novo recorde histórico,https://www.moneytimes.com.br/bitcoin...,2025-05-23 10:30:15,há 2 horas,8,bitcoin
-ETF de Bitcoin é aprovado nos EUA,https://www.moneytimes.com.br/etf...,2025-05-23 10:31:22,hoje 09:45,12,bitcoin
-```
-
-
-### Banco de Dados (exemplo de mensagem no terminal)
-```plaintext
-Verificando página 1...
-- Coletado: Bitcoin atinge novo recorde histórico
-Página 1 de 1
-- Coletado: ETF de Bitcoin é aprovado nos EUA
-Página 1 de 1
 
 Coleta finalizada: (2 notícias coletadas e 2 inseridas com sucesso.)
 ```
 
+### Dados no Banco de Dados
+
+As notícias são salvas em uma tabela com a seguinte estrutura: `(title, link, scraping_date, news_date, article, sentiment_analysis, confidence_score)`.
 
 ## Estrutura do Projeto
-```
-news-scraper/
-├── main.py                 # Script principal
-├── user_input.py           # Gerencia a entrada do usuário e o fluxo do programa
-├── run_scrapers.py         # Orquestra a execução dos scrapers e o salvamento dos dados
-├── save_csv.py             # Módulo para salvar os dados em formato CSV
-├── save_database.py        # Módulo para salvar os dados no banco de dados MySQL
-├── portals/
-│   ├── scraper_base.py     # Classe abstrata base para os scrapers
-│   ├── g1_scraper.py       # Scraper para G1
-│   ├── exame_scraper.py    # Scraper para Exame
-│   ├── carta_scraper.py    # Scraper para CartaCapital
-│   ├── moneytimes_scraper.py # Scraper para MoneyTimes
-│   └── suno_scraper.py     # Scraper para Suno
-├── .env                    # Arquivo para credenciais do banco de dados (não versionado)
-└── README.md               # Documentação
-```
 
-## Melhorias Implementadas
--   Filtragem temporal precisa.
--   Opção de salvar em banco de dados MySQL.
--   Opção de realizar scraping em todos os portais configurados.
--   Verificação de notícias duplicadas ao salvar no banco de dados.
-
-## Licença
-MIT License - Consulte o arquivo LICENSE para detalhes.
+```
+news-portals-keyword-scraper/
+├── .gitignore
+├── README.md
+├── requirements.txt
+└── src/
+    ├── main.py                 # Script principal que inicia a aplicação
+    ├── dto/                    # Módulos de Data Transfer Object (Scrapers)
+    │   ├── g1_scraper.py
+    │   ├── exame_scraper.py
+    │   ├── carta_scraper.py
+    │   ├── moneytimes_scraper.py
+    │   └── suno_scraper.py
+    └── service/                # Módulos de serviço
+        ├── run_scrapers.py     # Orquestra a execução dos scrapers
+        ├── save_database.py    # Gerencia a conexão e inserção no DB
+        ├── sentiment_analysis.py # Realiza a análise de sentimento
+        └── user_input.py       # Gerencia a entrada do usuário
+```

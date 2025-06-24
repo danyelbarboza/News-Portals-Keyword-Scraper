@@ -98,7 +98,7 @@ def run_scraper_db(portal_scraper, period, portal_name):
             print(f"- Coletado: {item['title']}")
             print(f"Página {item['current_page']} de {last_page}")
             
-    sentiment, score = SentimentAnalysis().analyze(resultados)    
-    db.insert_news(resultados, portal_name, sentiment, score)
+    news_analysis = SentimentAnalysis().analyze(resultados)    
+    db.insert_news(news_analysis, portal_name)
 
     

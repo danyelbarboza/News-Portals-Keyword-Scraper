@@ -21,6 +21,7 @@ class SentimentAnalysis:
             resultado = self.classificador_sentimento(text)
             label = resultado[0]['label']
             score = resultado[0]['score']
+            rounded_score = round(score, 2)
             analysis.append({
                 "title": news['title'],
                 "link": news['link'],
@@ -28,6 +29,6 @@ class SentimentAnalysis:
                 "news_date": news['news_date'],
                 "article": news['article'],
                 "sentiment_analysis": label,
-                "confidence_score": score
+                "confidence_score": rounded_score
             })
         return analysis
